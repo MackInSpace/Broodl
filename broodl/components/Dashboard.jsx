@@ -14,7 +14,7 @@ const fugaz = Fugaz_One({
 });
 
 export default function Dashboard() {
-    const { currentUser, useDataObj, setUserDataObj, loading } = useAuth()
+    const { currentUser, userDataObj, setUserDataObj, loading } = useAuth()
     const [data, setData] = useState({})
     const now = new Date()
 
@@ -37,12 +37,33 @@ export default function Dashboard() {
         ...countValues(),
         time_remaining: `${23 - now.getHours()}H ${60 - now.getMinutes()}M`,
     }
+    async function handleSetMood(mood) {
+        const day = now.getDate()
+        const month = now.getMonth()
+        const year = now.getFullYear()
 
+        try {
+            const newData = { ...userDataObj }
+            if (!newData?.[year]) {
+                newData[year][month] = {}
+            }
+
+            newData[year][month][day] = mood
+            //update the current state
+            setData(newData)
+            //update the global state
+            setUserDataObj(newData)
+            //update firesbase
+            const docRef = doc(db, 'users', currentUser.uid)
+            const res = await setDoc(docRef, {
+                [year]: {
+                    [month]: {
+                        [day]: mood
+                    }
+                }
+            }, { merge: true })
+        } catch (err) {
+            console.log('Failed to set data: ', err.message)
+        }
     }
-
-    return (
-        <div>
-            
-        </div>
-    )
 }
