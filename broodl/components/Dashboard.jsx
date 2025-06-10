@@ -66,4 +66,33 @@ export default function Dashboard() {
             console.log('Failed to set data: ', err.message)
         }
     }
+
+    const moods = {
+        '&*@#$': '😭',
+        'Sad': '🥲',
+        'Existing': '😶',
+        'Good': '😊',
+        'Elated': '😍',
+    }
+
+    useEffect(() => {
+        if (!currentUser || !userDataObj) {
+            return
+        }
+        setData(userDataObj)
+    }, [currentUser, userDataObj])
+
+    if (loading) {
+        return <Loading />
+    }
+
+    if (!currentUser) {
+        return <Login />
+    }
+
+    return (
+        <div>
+            <div></div>
+        </div>
+    )
 }
